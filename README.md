@@ -51,26 +51,27 @@ const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
 export default MyApp
 ```
 
-3. Manage the wallet by using the `useWalletManager` hook in your pages and components. You can use the hook in as many components as you want since the same objects are always returned (as long as there is only one WalletManagerProvider ancestor).
+3. Manage the wallet by using the `useWalletManager` and `useWallet` hooks in your pages and components.
 
 ```tsx
 const Home: NextPage = () => {
-  const { connect, disconnect, connectedWallet, error } = useWalletManager()
+  const { connect, disconnect } = useWalletManager()
+  const { status, error, name, address, signingCosmWasmClient } = useWallet()
 
-  return connectedWallet ? (
+  return status === WalletConnectionStatus.Connected ? (
     <div>
       <p>
-        Name: <b>{connectedWallet.name}</b>
+        Name: <b>{name}</b>
       </p>
       <p>
-        Address: <b>{connectedWallet.address}</b>
+        Address: <b>{address}</b>
       </p>
       <button onClick={disconnect}>Disconnect</button>
     </div>
   ) : (
     <div>
       <button onClick={connect}>Connect</button>
-      {error && <p>{error.message}</p>}
+      {error && <p>{error instanceof Error ? error.message : `${error}`}</p>}
     </div>
   )
 }
@@ -101,10 +102,16 @@ This component takes the following properties:
 
 ### useWalletManager
 
-This hook returns the following fields (`IWalletManagerContext`):
+```
+() => IWalletManagerContext
+```
+
+This hook returns all relevant fields, but you will likely only use this to `connect` and `disconnect`.
+
+Returns (`IWalletManagerContext`):
 
 | Property                          | Type                                                             | Description                                                                                                                                                                                                                                                                   |
-| --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `connect`                         | `() => void`                                                     | Function to begin the connection process. This will either display the wallet picker modal or immediately attempt to connect to a wallet depending on the props passed to WalletManagerProvider.                                                                              |
 | `disconnect`                      | `() => Promise<void>`                                            | Function that disconnects from the connected wallet.                                                                                                                                                                                                                          |
 | `connectedWallet`                 | `ConnectedWallet \| undefined`                                   | Connected wallet info and clients for interacting with the chain.                                                                                                                                                                                                             |
@@ -112,12 +119,18 @@ This hook returns the following fields (`IWalletManagerContext`):
 | `error`                           | `unknown`                                                        | Error encountered during the connection process.                                                                                                                                                                                                                              |
 | `isEmbeddedKeplrMobileWeb`        | `boolean`                                                        | If this app is running inside the Keplr Mobile web interface.                                                                                                                                                                                                                 |
 | `chainInfoOverrides`              | `ChainInfoOverrides \| undefined`                                | List or getter of additional or replacement ChainInfo objects. These will take precedent over internal definitions by comparing `chainId`. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
-| `getSigningCosmWasmClientOptions` | `SigningClientGetter<SigningCosmWasmClientOptions> \| undefined` |                                                                                                                                                                                                                                                                               | Getter for options passed to SigningCosmWasmClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
-| `getSigningStargateClientOptions` | `SigningClientGetter<SigningStargateClientOptions> \| undefined` |                                                                                                                                                                                                                                                                               | Getter for options passed to SigningStargateClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
+| `getSigningCosmWasmClientOptions` | `SigningClientGetter<SigningCosmWasmClientOptions> \| undefined` | Getter for options passed to SigningCosmWasmClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook.                                                                          |
+| `getSigningStargateClientOptions` | `SigningClientGetter<SigningStargateClientOptions> \| undefined` | Getter for options passed to SigningStargateClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook.                                                                          |
 
 ### useWallet
 
-This hooks returns the following fields (`ConnectedWallet` with `status` and `error` added):
+```
+(chainId?: ChainInfo["chainId"]) => UseWalletResponse
+```
+
+This hook is a subset of `useWalletManager`, returning the fields inside the `connectedWallet` object, as well as `status` and `error`. It also takes an optional `chainId`, which will instantiate clients for the desired chain once the wallet is connected. This lets you seamlessly connect and use clients for many different chains. If no `chainId` is passed, it will return the connection info for the default chain (from the initial wallet connection via `useWalletManager`'s `connect` function).
+
+Returns:
 
 | Property                | Type                                 | Description                                              |
 | ----------------------- | ------------------------------------ | -------------------------------------------------------- |
@@ -135,6 +148,9 @@ This hooks returns the following fields (`ConnectedWallet` with `status` and `er
 ### Relevant types
 
 ```tsx
+type UseWalletResponse = Partial<ConnectedWallet> &
+  Pick<IWalletManagerContext, "status" | "error">
+
 interface ModalClassNames {
   modalContent?: string
   modalOverlay?: string
