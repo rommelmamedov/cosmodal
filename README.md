@@ -2,90 +2,47 @@
 
 A wallet connector with mobile WalletConnect support for the Cosmos ecosystem.
 
+## Example
+
+The example is deployed on Vercel at https://noahsaso-cosmodal.vercel.app.
+
+It can also be run locally using these commands:
+
+```sh
+# Clone the repo.
+git clone https://github.com/NoahSaso/cosmodal
+# Enter the example folder.
+cd cosmodal/example
+
+# Start the Next.js dev server.
+npm install && npm run dev
+# OR
+yarn && yarn dev
+```
+
 ## Setup
 
 1. Install the Cosmodal package in your React project
 
-```
-yarn add @noahsaso/cosmodal
-
-# OR
-
+```sh
 npm install --save @noahsaso/cosmodal
+# OR
+yarn add @noahsaso/cosmodal
 ```
 
-2. Import `WalletManagerProvider` and wrap it around your whole app. Only include it once as an ancestor of all components that need to access the wallet. Likely you'll want this in your root App component.
+2. Import `WalletManagerProvider` and wrap it around your whole app. Only include it once as an ancestor of all components that need to access the wallet. Likely you'll want this in your root App component. Check out the example code to see how to define wallets.
 
 ```tsx
-import { FunctionComponent } from "react"
-import { getKeplrFromWindow } from "@keplr-wallet/stores"
-import { ChainInfo } from "@keplr-wallet/types"
-import WalletConnect from "@walletconnect/client"
-import {
-  KeplrWalletConnectV1,
-  Wallet,
-  WalletClient,
-  WalletManagerProvider,
-} from "@noahsaso/cosmodal"
-import type { AppProps } from "next/app"
-import Head from "next/head"
-import { EmbedChainInfos } from "../config"
-
-const CHAIN_ID = "juno-1"
-const CHAIN_INFO: ChainInfo = "..."
-
-const enableWallet = async (wallet: Wallet, client: WalletClient) => {
-  // WalletConnect does not support suggesting chains.
-  if (!(client instanceof KeplrWalletConnectV1)) {
-    await client.experimentalSuggestChain(CHAIN_INFO)
-  }
-  await client.enable(CHAIN_ID)
-}
-
-const AvailableWallets: Wallet[] = [
-  {
-    id: "keplr-wallet-extension",
-    name: "Keplr Wallet",
-    description: "Keplr Chrome Extension",
-    imageUrl: "/keplr-wallet-extension.png",
-    isWalletConnect: false,
-    getClient: getKeplrFromWindow,
-    onSelect: async () => {
-      const hasKeplr = !!(await getKeplrFromWindow())
-      if (!hasKeplr) {
-        throw new KeplrNotInstalledError()
-      }
-    },
-  },
-  // WalletConnect only supports mainnet. Not testnet.
-  ...(CHAIN_ID === "juno-1"
-    ? [
-        {
-          id: "walletconnect-keplr",
-          name: "WalletConnect",
-          description: "Keplr Mobile",
-          imageUrl: "/walletconnect-keplr.png",
-          isWalletConnect: true,
-          getClient: async (walletConnect?: WalletConnect) => {
-            if (walletConnect?.connected)
-              return new KeplrWalletConnectV1(walletConnect, [CHAIN_INFO])
-            throw new Error("Mobile wallet not connected.")
-          },
-        },
-      ]
-    : []),
-]
-
 const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
   <WalletManagerProvider
-    enableKeplr={enableKeplr}
-    clientMeta={{
+    defaultChainId={ChainInfoID.Juno1}
+    enabledWallets={[WalletType.Keplr, WalletType.WalletConnectKeplr]}
+    walletConnectClientMeta={{
       name: "CosmodalExampleDAPP",
       description: "A dapp using the cosmodal library.",
       url: "https://cosmodal.example.app",
       icons: ["https://cosmodal.example.app/walletconnect.png"],
     }}
-    wallets={AvailableWallets}
   >
     <Component {...pageProps} />
   </WalletManagerProvider>
@@ -94,129 +51,90 @@ const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
 export default MyApp
 ```
 
-3. Manage the wallet by using the `useWalletManager` hook in your components. You can use the hook in as many components as you want since the same objects are always returned (as long as there is only one WalletManagerProvider ancestor).
+3. Manage the wallet by using the `useWalletManager` hook in your pages and components. You can use the hook in as many components as you want since the same objects are always returned (as long as there is only one WalletManagerProvider ancestor).
 
 ```tsx
-import { Keplr } from "@keplr-wallet/types"
-import {
-  KeplrWalletConnectV1,
-  useWalletManager,
-  WalletClient,
-} from "@noahsaso/cosmodal"
-import type { NextPage } from "next"
-import { useEffect, useState } from "react"
-import { CosmWasmClient } from "@cosmjs/cosmwasm-stargate"
-import { GasPrice } from "@cosmjs/stargate"
-
-const CHAIN_ID = "juno-1"
-const CHAIN_RPC_ENDPOINT = "..."
-const CW20_CONTRACT_ADDRESS = "..."
-const RECIPIENT_ADDDRESS = "..."
-
 const Home: NextPage = () => {
-  const { connect, disconnect, connectedWallet, connectionError } =
-    useWalletManager()
-
-  const [name, setName] = useState("")
-  const [address, setAddress] = useState("")
-  useEffect(() => {
-    if (!connectedWallet) return
-
-    const { client } = connectedWallet
-
-    // Get the name of the connected wallet.
-    client.getKey(CHAIN_ID).then((key) => {
-      setName(key.name)
-    })
-    // Get the address of the connected wallet.
-    client.getAccounts().then((accounts) => {
-      setAddress(accounts[0].address)
-    })
-
-    // Execute a contract to transfer some tokens.
-    transfer(client)
-  }, [connectedWallet])
+  const { connect, disconnect, connectedWallet, error } = useWalletManager()
 
   return connectedWallet ? (
     <div>
       <p>
-        Name: <b>{name}</b>
+        Name: <b>{connectedWallet.name}</b>
       </p>
       <p>
-        Address: <b>{address}</b>
+        Address: <b>{connectedWallet.address}</b>
       </p>
       <button onClick={disconnect}>Disconnect</button>
     </div>
   ) : (
     <div>
       <button onClick={connect}>Connect</button>
-      {connectionError && <p>{connectionError.message}</p>}
+      {error && <p>{error.message}</p>}
     </div>
   )
 }
 
 export default Home
-
-const transfer = async (client: WalletClient) => {
-  const offlineSigner =
-    // WalletConnect only supports the Amino signer.
-    client instanceof KeplrWalletConnectV1
-      ? await client.getOfflineSignerOnlyAmino(CHAIN_ID)
-      : await client.getOfflineSignerAuto(CHAIN_ID)
-
-  // Connect to the chain via an RPC node.
-  const cwClient = await SigningCosmWasmClient.connectWithSigner(
-    CHAIN_RPC_ENDPOINT,
-    offlineSigner,
-    {
-      gasPrice: GasPrice.fromString("0.0025ujuno"),
-    }
-  )
-
-  // Get the address of the connected wallet.
-  const walletAddress = (await client.getAccounts())[0].address
-
-  // Transfer 10 tokens from the wallet to the recipient address.
-  const result = await cwClient.execute(
-    walletAddress,
-    CW20_CONTRACT_ADDRESS,
-    {
-      transfer: {
-        amount: "10",
-        recipient: RECIPIENT_ADDDRESS,
-      },
-    },
-    "auto"
-  )
-
-  alert("Transferred 10 tokens in TX " + result.transactionHash)
-}
 ```
 
 ## API
 
+### WalletManagerProvider
+
+This component takes the following properties:
+
+| Property                          | Type                                                             | Required | Description                                                                                                                                          |
+| --------------------------------- | ---------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enabledWalletTypes`              | `WalletType[]`                                                   | &#x2611; | Wallet types available for connection.                                                                                                               |
+| `defaultChainId`                  | `string`                                                         | &#x2611; | Chain ID to initially connect to and selected by default if nothing is passed to the hook. Must be present in one of the objects in `chainInfoList`. |
+| `chainInfoOverrides`              | `ChainInfoOverrides \| undefined`                                |          | List or getter of additional or replacement ChainInfo objects. These will take precedent over internal definitions by comparing `chainId`.           |
+| `classNames`                      | `ModalClassNames`                                                |          | Class names applied to various components for custom theming.                                                                                        |
+| `closeIcon`                       | `ReactNode`                                                      |          | Custom close icon.                                                                                                                                   |
+| `walletConnectClientMeta`         | `IClientMeta`                                                    |          | Descriptive info about the React app which gets displayed when enabling a WalletConnect wallet (e.g. name, image, etc.).                             |
+| `renderLoader`                    | `() => ReactNode`                                                |          | A custom loader to display in a few modals, such as when enabling the wallet.                                                                        |
+| `preselectedWalletType`           | `WalletType`                                                     |          | When set to a valid wallet type, the connect function will skip the selection modal and attempt to connect to this wallet immediately.               |
+| `localStorageKey`                 | `string`                                                         |          | localStorage key for saving, loading, and auto connecting to a wallet.                                                                               |
+| `onKeplrKeystoreChangeEvent`      | `(event: Event) => unknown`                                      |          | Callback that will be attached as a listener to the `keplr_keystorechange` event on the window object.                                               |
+| `getSigningCosmWasmClientOptions` | `SigningClientGetter<SigningCosmWasmClientOptions> \| undefined` |          | Getter for options passed to SigningCosmWasmClient on connection.                                                                                    |
+| `getSigningStargateClientOptions` | `SigningClientGetter<SigningStargateClientOptions> \| undefined` |          | Getter for options passed to SigningStargateClient on connection.                                                                                    |
+
+### useWalletManager
+
+This hook returns the following fields (`IWalletManagerContext`):
+
+| Property                          | Type                                                             | Description                                                                                                                                                                                                                                                                   |
+| --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `connect`                         | `() => void`                                                     | Function to begin the connection process. This will either display the wallet picker modal or immediately attempt to connect to a wallet depending on the props passed to WalletManagerProvider.                                                                              |
+| `disconnect`                      | `() => Promise<void>`                                            | Function that disconnects from the connected wallet.                                                                                                                                                                                                                          |
+| `connectedWallet`                 | `ConnectedWallet \| undefined`                                   | Connected wallet info and clients for interacting with the chain.                                                                                                                                                                                                             |
+| `status`                          | `WalletConnectionStatus`                                         | Status of cosmodal.                                                                                                                                                                                                                                                           |
+| `error`                           | `unknown`                                                        | Error encountered during the connection process.                                                                                                                                                                                                                              |
+| `isEmbeddedKeplrMobileWeb`        | `boolean`                                                        | If this app is running inside the Keplr Mobile web interface.                                                                                                                                                                                                                 |
+| `chainInfoOverrides`              | `ChainInfoOverrides \| undefined`                                | List or getter of additional or replacement ChainInfo objects. These will take precedent over internal definitions by comparing `chainId`. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
+| `getSigningCosmWasmClientOptions` | `SigningClientGetter<SigningCosmWasmClientOptions> \| undefined` |                                                                                                                                                                                                                                                                               | Getter for options passed to SigningCosmWasmClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
+| `getSigningStargateClientOptions` | `SigningClientGetter<SigningStargateClientOptions> \| undefined` |                                                                                                                                                                                                                                                                               | Getter for options passed to SigningStargateClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
+
+### useWallet
+
+This hooks returns the following fields (`ConnectedWallet` with `status` and `error` added):
+
+| Property                | Type                                 | Description                                              |
+| ----------------------- | ------------------------------------ | -------------------------------------------------------- |
+| `status`                | `WalletConnectionStatus`             | Status of connection.                                    |
+| `error`                 | `unknown`                            | Error encountered during the connection process.         |
+| `wallet`                | `Wallet \| undefined`                | Wallet.                                                  |
+| `walletClient`          | `WalletClient \| undefined`          | Wallet client.                                           |
+| `chainInfo`             | `ChainInfo \| undefined`             | Chain info the clients are connected to.                 |
+| `offlineSigner`         | `OfflineSigner \| undefined`         | Offline signer for the wallet client.                    |
+| `name`                  | `string \| undefined`                | User's name for their wallet.                            |
+| `address`               | `string \| undefined`                | Wallet address.                                          |
+| `signingCosmWasmClient` | `SigningCosmWasmClient \| undefined` | Signing client for interacting with CosmWasm chain APIs. |
+| `signingStargateClient` | `SigningStargateClient \| undefined` | Signing client for interacting with Stargate chain APIs. |
+
 ### Relevant types
 
 ```tsx
-interface Wallet {
-  // A unique identifier among all wallets.
-  id: string
-  // The name of the wallet.
-  name: string
-  // A description of the wallet.
-  description: string
-  // The URL of the wallet logo.
-  imageUrl: string
-  // If this wallet client uses WalletConnect.
-  isWalletConnect: boolean
-  // A function that returns an instantiated wallet client, with walletConnect passed if `isWalletConnect` is true.
-  getClient: (
-    walletConnect?: WalletConnect
-  ) => Promise<WalletClient | undefined>
-  // A function whose response is awaited right after the wallet is picked. If this throws an error, the selection process is interrupted, `connectionError` is set to the thrown error, and all modals are closed.
-  onSelect?: () => Promise<void>
-}
-
 interface ModalClassNames {
   modalContent?: string
   modalOverlay?: string
@@ -239,43 +157,111 @@ interface IClientMeta {
   name: string
 }
 
-interface ConnectedWallet {
-  wallet: Wallet
-  client: WalletClient
+type WalletClient = Keplr | KeplrWalletConnectV1
+
+enum WalletType {
+  Keplr = "keplr",
+  WalletConnectKeplr = "walletconnect_keplr",
 }
 
-interface WalletManagerContextInfo {
+interface ConnectedWallet {
+  // Wallet.
+  wallet: Wallet
+  // Wallet client.
+  walletClient: WalletClient
+  // Chain info the clients are connected to.
+  chainInfo: ChainInfo
+  // Offline signer for the wallet client.
+  offlineSigner: OfflineSigner
+  // Name of wallet.
+  name: string
+  // Wallet address.
+  address: string
+  // Signing client for interacting with CosmWasm chain APIs.
+  signingCosmWasmClient: SigningCosmWasmClient
+  // Signing client for interacting with Stargate chain APIs.
+  signingStargateClient: SigningStargateClient
+}
+
+enum WalletConnectionStatus {
+  Initializing,
+  AttemptingAutoConnection,
+  // Don't call connect until this state is reached.
+  ReadyForConnection,
+  Connecting,
+  Connected,
+  Resetting,
+  Errored,
+}
+
+type SigningClientGetter<T> = (
+  chainInfo: ChainInfo
+) => T | Promise<T | undefined> | undefined
+
+type ChainInfoOverrides =
+  | ChainInfo[]
+  | (() => undefined | ChainInfo[] | Promise<undefined | ChainInfo[]>)
+
+interface IWalletManagerContext {
+  // Function to begin the connection process. This will either display
+  // the wallet picker modal or immediately attempt to connect to a wallet
+  // when `preselectedWalletType` is set.
   connect: () => void
+  // Function that disconnects from the connected wallet.
   disconnect: () => Promise<void>
+  // Connected wallet info and clients for interacting with the chain.
   connectedWallet?: ConnectedWallet
-  connectionError?: unknown
-  isMobileWeb: boolean
+  // Status of cosmodal.
+  status: WalletConnectionStatus
+  // Error encountered during the connection process.
+  error?: unknown
+  // If this app is running inside the Keplr Mobile web interface.
+  isEmbeddedKeplrMobileWeb: boolean
+  // List or getter of additional or replacement ChainInfo objects. These
+  // will take precedent over internal definitions by comparing `chainId`.
+  // This is passed through from the provider props to allow composition
+  // of your own hooks, and for use in the built-in useWallet hook.
+  chainInfoOverrides?: ChainInfoOverrides
+  // Getter for options passed to SigningCosmWasmClient on connection.
+  // This is passed through from the provider props to allow composition
+  // of your own hooks, and for use in the built-in useWallet hook.
+  getSigningCosmWasmClientOptions?: SigningClientGetter<SigningCosmWasmClientOptions>
+  // Getter for options passed to SigningStargateClient on connection.
+  // This is passed through from the provider props to allow composition
+  // of your own hooks, and for use in the built-in useWallet hook.
+  getSigningStargateClientOptions?: SigningClientGetter<SigningStargateClientOptions>
+}
+
+interface WalletManagerProviderProps {
+  // Wallet types available for connection.
+  enabledWalletTypes: WalletType[]
+  // Chain ID to initially connect to and selected by default if nothing
+  // is passed to the hook. Must be present in one of the objects in
+  // `chainInfoList`.
+  defaultChainId: string
+  // List or getter of additional or replacement ChainInfo objects. These
+  // will take precedent over internal definitions by comparing `chainId`.
+  chainInfoOverrides?: ChainInfoOverrides
+  // Class names applied to various components for custom theming.
+  classNames?: ModalClassNames
+  // Custom close icon.
+  closeIcon?: ReactNode
+  // Descriptive info about the webapp which gets displayed when enabling a
+  // WalletConnect wallet (e.g. name, image, etc.).
+  walletConnectClientMeta?: IClientMeta
+  // A custom loader to display in the modals, such as enabling the wallet.
+  renderLoader?: () => ReactNode
+  // When set to a valid wallet type, the connect function will skip the
+  // selection modal and attempt to connect to this wallet immediately.
+  preselectedWalletType?: `${WalletType}`
+  // localStorage key for saving, loading, and auto connecting to a wallet.
+  localStorageKey?: string
+  // Callback that will be attached as a listener to the
+  // `keplr_keystorechange` event on the window object.
+  onKeplrKeystoreChangeEvent?: (event: Event) => unknown
+  // Getter for options passed to SigningCosmWasmClient on connection.
+  getSigningCosmWasmClientOptions?: SigningClientGetter<SigningCosmWasmClientOptions>
+  // Getter for options passed to SigningStargateClient on connection.
+  getSigningStargateClientOptions?: SigningClientGetter<SigningStargateClientOptions>
 }
 ```
-
-### WalletManagerProvider
-
-This component takes the following properties:
-
-| Property                  | Type                                                              | Required | Description                                                                                                                                                                                                                                |
-| ------------------------- | ----------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `wallets`                 | `Wallet[]`                                                        | &#x2611; | Wallets available for connection.                                                                                                                                                                                                          |
-| `enableWallet`            | `(wallet: Wallet, client: WalletClient) => Promise<void> \| void` | &#x2611; | Function that enables the wallet once one is selected.                                                                                                                                                                                     |
-| `classNames`              | `ModalClassNames`                                                 |          | Class names applied to various components for custom theming.                                                                                                                                                                              |
-| `closeIcon`               | `ReactNode`                                                       |          | Custom close icon.                                                                                                                                                                                                                         |
-| `preselectedWalletId`     | `string \| undefined`                                             |          | When set, the connect function will skip the selection modal and attempt to connect to this wallet immediately.                                                                                                                            |
-| `walletConnectClientMeta` | `IClientMeta`                                                     |          | Descriptive info about the React app which gets displayed when enabling a WalletConnect wallet (e.g. name, image, etc.).                                                                                                                   |
-| `attemptAutoConnect`      | `boolean`                                                         |          | If set to true on initial mount, the connect function will be called as soon as possible. If `preselectedWalletId` is also set and a wallet has previously connected and enabled, this can be used to seamlessly reconnect a past session. |
-| `renderLoader`            | `() => ReactNode`                                                 |          | A custom loader to display in a few modals, such as when enabling the wallet.                                                                                                                                                              |
-
-### useWalletManager
-
-This hook returns the following properties in an object (`WalletManagerContextInfo`):
-
-| Property          | Type                           | Description                                                                                                                                                                 |
-| ----------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `connect`         | `() => void`                   | Function to begin the connection process. This will either display the wallet picker modal or immediately attempt to connect to a wallet when `preselectedWalletId` is set. |
-| `disconnect`      | `() => Promise<void>`          | Function that disconnects from the connected wallet.                                                                                                                        |
-| `connectedWallet` | `ConnectedWallet \| undefined` | Connected wallet information and client.                                                                                                                                    |
-| `connectionError` | `unknown`                      | Error encountered during the connection process. Can be anything since the `enableWallet` function can throw anything.                                                      |
-| `isMobileWeb`     | `boolean`                      | If this app is running inside the Keplr Mobile web interface.                                                                                                               |
