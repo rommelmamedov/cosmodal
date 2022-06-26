@@ -116,6 +116,7 @@ Returns (`IWalletManagerContext`):
 | `disconnect`                      | `() => Promise<void>`                                            | Function that disconnects from the connected wallet.                                                                                                                                                                                                                          |
 | `connectedWallet`                 | `ConnectedWallet \| undefined`                                   | Connected wallet info and clients for interacting with the chain.                                                                                                                                                                                                             |
 | `status`                          | `WalletConnectionStatus`                                         | Status of cosmodal.                                                                                                                                                                                                                                                           |
+| `connected`                       | `boolean`                                                        | If status is WalletConnectionStatus.Connected.                                                                                                                                                                                                                                |
 | `error`                           | `unknown`                                                        | Error encountered during the connection process.                                                                                                                                                                                                                              |
 | `isEmbeddedKeplrMobileWeb`        | `boolean`                                                        | If this app is running inside the Keplr Mobile web interface.                                                                                                                                                                                                                 |
 | `chainInfoOverrides`              | `ChainInfoOverrides \| undefined`                                | List or getter of additional or replacement ChainInfo objects. These will take precedent over internal definitions by comparing `chainId`. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
@@ -135,6 +136,7 @@ Returns:
 | Property                | Type                                 | Description                                              |
 | ----------------------- | ------------------------------------ | -------------------------------------------------------- |
 | `status`                | `WalletConnectionStatus`             | Status of connection.                                    |
+| `connected`             | `boolean`                            | If status is WalletConnectionStatus.Connected.           |
 | `error`                 | `unknown`                            | Error encountered during the connection process.         |
 | `wallet`                | `Wallet \| undefined`                | Wallet.                                                  |
 | `walletClient`          | `WalletClient \| undefined`          | Wallet client.                                           |
@@ -229,6 +231,8 @@ interface IWalletManagerContext {
   connectedWallet?: ConnectedWallet
   // Status of cosmodal.
   status: WalletConnectionStatus
+  // If status is WalletConnectionStatus.Connected.
+  connected: boolean
   // Error encountered during the connection process.
   error?: unknown
   // If this app is running inside the Keplr Mobile web interface.
