@@ -33,10 +33,16 @@ yarn add @noahsaso/cosmodal
 2. Import `WalletManagerProvider` and wrap it around your whole app. Only include it once as an ancestor of all components that need to access the wallet. Likely you'll want this in your root App component. Check out the example code to see how to define wallets.
 
 ```tsx
+import {
+  WalletManagerProvider,
+  ChainInfoID,
+  WalletType,
+} from "@noahsaso/cosmodal"
+
 const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
   <WalletManagerProvider
     defaultChainId={ChainInfoID.Juno1}
-    enabledWallets={[WalletType.Keplr, WalletType.WalletConnectKeplr]}
+    enabledWalletTypes={[WalletType.Keplr, WalletType.WalletConnectKeplr]}
     walletConnectClientMeta={{
       name: "CosmodalExampleDAPP",
       description: "A dapp using the cosmodal library.",
@@ -54,6 +60,12 @@ export default MyApp
 3. Manage the wallet by using the `useWalletManager` and `useWallet` hooks in your pages and components.
 
 ```tsx
+import {
+  useWalletManager,
+  useWallet,
+  WalletConnectionStatus,
+} from "@noahsaso/cosmodal"
+
 const Home: NextPage = () => {
   const { connect, disconnect } = useWalletManager()
   const { status, error, name, address, signingCosmWasmClient } = useWallet()
