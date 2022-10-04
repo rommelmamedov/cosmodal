@@ -120,21 +120,6 @@ This component takes the following properties:
 
 This hook returns all relevant fields, but you will likely only use this to `connect` and `disconnect`.
 
-Returns (`IWalletManagerContext`):
-
-| Property                          | Type                                                             | Description                                                                                                                                                                                                                                                                   |
-| --------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `connect`                         | `() => void`                                                     | Function to begin the connection process. This will either display the wallet picker modal or immediately attempt to connect to a wallet depending on the props passed to WalletManagerProvider.                                                                              |
-| `disconnect`                      | `() => Promise<void>`                                            | Function that disconnects from the connected wallet.                                                                                                                                                                                                                          |
-| `connectedWallet`                 | `ConnectedWallet \| undefined`                                   | Connected wallet info and clients for interacting with the chain.                                                                                                                                                                                                             |
-| `status`                          | `WalletConnectionStatus`                                         | Status of cosmodal.                                                                                                                                                                                                                                                           |
-| `connected`                       | `boolean`                                                        | If status is WalletConnectionStatus.Connected.                                                                                                                                                                                                                                |
-| `error`                           | `unknown`                                                        | Error encountered during the connection process.                                                                                                                                                                                                                              |
-| `isEmbeddedKeplrMobileWeb`        | `boolean`                                                        | If this app is running inside the Keplr Mobile web interface.                                                                                                                                                                                                                 |
-| `chainInfoOverrides`              | `ChainInfoOverrides \| undefined`                                | List or getter of additional or replacement ChainInfo objects. These will take precedent over internal definitions by comparing `chainId`. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook. |
-| `getSigningCosmWasmClientOptions` | `SigningClientGetter<SigningCosmWasmClientOptions> \| undefined` | Getter for options passed to SigningCosmWasmClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook.                                                                          |
-| `getSigningStargateClientOptions` | `SigningClientGetter<SigningStargateClientOptions> \| undefined` | Getter for options passed to SigningStargateClient on connection. This is passed through from the provider props to allow composition of your own hooks, and for use in the built-in useWallet hook.                                                                          |
-
 ### useWallet
 
 ```
@@ -142,22 +127,6 @@ Returns (`IWalletManagerContext`):
 ```
 
 This hook is a subset of `useWalletManager`, returning the fields inside the `connectedWallet` object, as well as `status` and `error`. It also takes an optional `chainId`, which will instantiate clients for the desired chain once the wallet is connected. This lets you seamlessly connect and use clients for many different chains. If no `chainId` is passed, it will return the connection info for the default chain (from the initial wallet connection via `useWalletManager`'s `connect` function).
-
-Returns:
-
-| Property                | Type                                 | Description                                              |
-| ----------------------- | ------------------------------------ | -------------------------------------------------------- |
-| `status`                | `WalletConnectionStatus`             | Status of connection.                                    |
-| `connected`             | `boolean`                            | If status is WalletConnectionStatus.Connected.           |
-| `error`                 | `unknown`                            | Error encountered during the connection process.         |
-| `wallet`                | `Wallet \| undefined`                | Wallet.                                                  |
-| `walletClient`          | `WalletClient \| undefined`          | Wallet client.                                           |
-| `chainInfo`             | `ChainInfo \| undefined`             | Chain info the clients are connected to.                 |
-| `offlineSigner`         | `OfflineSigner \| undefined`         | Offline signer for the wallet client.                    |
-| `name`                  | `string \| undefined`                | User's name for their wallet.                            |
-| `address`               | `string \| undefined`                | Wallet address.                                          |
-| `signingCosmWasmClient` | `SigningCosmWasmClient \| undefined` | Signing client for interacting with CosmWasm chain APIs. |
-| `signingStargateClient` | `SigningStargateClient \| undefined` | Signing client for interacting with Stargate chain APIs. |
 
 ### Relevant types
 
@@ -207,6 +176,11 @@ interface ConnectedWallet {
   name: string
   // Wallet address.
   address: string
+  // Wallet public key.
+  publicKey: {
+    data: Uint8Array
+    hex: string
+  }
   // Signing client for interacting with CosmWasm chain APIs.
   signingCosmWasmClient: SigningCosmWasmClient
   // Signing client for interacting with Stargate chain APIs.

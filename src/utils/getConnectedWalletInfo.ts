@@ -20,12 +20,13 @@ export const getConnectedWalletInfo = async (
   await client.enable(chainInfo.chainId)
 
   // Parallelize for efficiency.
-  const [{ name, bech32Address: address }, offlineSigner] = await Promise.all([
-    // Get name.
-    client.getKey(chainInfo.chainId),
-    // Get offline signer.
-    wallet.getOfflineSignerFunction(client)(chainInfo.chainId),
-  ])
+  const [{ name, bech32Address: address, pubKey }, offlineSigner] =
+    await Promise.all([
+      // Get name, address, and public key.
+      client.getKey(chainInfo.chainId),
+      // Get offline signer.
+      wallet.getOfflineSignerFunction(client)(chainInfo.chainId),
+    ])
 
   const [signingCosmWasmClient, signingStargateClient] = await Promise.all([
     // Get CosmWasm client.
@@ -57,6 +58,10 @@ export const getConnectedWalletInfo = async (
     offlineSigner,
     name,
     address,
+    publicKey: {
+      data: pubKey,
+      hex: [...pubKey].map((i) => i.toString(16).padStart(2, "0")).join(""),
+    },
     signingCosmWasmClient,
     signingStargateClient,
   }

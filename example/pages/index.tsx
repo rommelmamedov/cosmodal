@@ -1,11 +1,21 @@
-import { WalletConnectionStatus, useWallet, useWalletManager } from "@noahsaso/cosmodal"
+import {
+  WalletConnectionStatus,
+  useWallet,
+  useWalletManager,
+} from "@noahsaso/cosmodal"
 import type { NextPage } from "next"
 import { useCallback, useState } from "react"
 
 const Home: NextPage = () => {
-  const { connect, disconnect } =
-    useWalletManager()
-  const { status: walletStatus, error, name, address, signingCosmWasmClient } = useWallet()
+  const { connect, disconnect } = useWalletManager()
+  const {
+    status: walletStatus,
+    error,
+    name,
+    address,
+    publicKey,
+    signingCosmWasmClient,
+  } = useWallet()
 
   const [contractAddress, setContractAddress] = useState("")
   const [msg, setMsg] = useState("")
@@ -47,6 +57,12 @@ const Home: NextPage = () => {
             <p>
               Address: <b>{address}</b>
             </p>
+            <p>
+              Public key:{" "}
+              <b>
+                {publicKey?.hex ?? '<empty>'}
+              </b>
+            </p>
             <button
               onClick={disconnect}
               className="px-3 py-2 rounded-md border border-gray bg-gray-200 hover:opacity-70"
@@ -78,7 +94,9 @@ const Home: NextPage = () => {
               Execute
             </button>
 
-            {status && <pre className="overflow-scroll text-xs mt-2">{status}</pre>}
+            {status && (
+              <pre className="overflow-scroll text-xs mt-2">{status}</pre>
+            )}
           </>
         ) : (
           <>
@@ -89,11 +107,7 @@ const Home: NextPage = () => {
               Connect
             </button>
             {error ? (
-              <p>
-                {error instanceof Error
-                  ? error.message
-                  : `${error}`}
-              </p>
+              <p>{error instanceof Error ? error.message : `${error}`}</p>
             ) : undefined}
           </>
         )}

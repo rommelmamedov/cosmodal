@@ -56,6 +56,11 @@ export interface ConnectedWallet {
   name: string
   // Wallet address.
   address: string
+  // Wallet public key.
+  publicKey: {
+    data: Uint8Array
+    hex: string
+  }
   // Signing client for interacting with CosmWasm chain APIs.
   signingCosmWasmClient: SigningCosmWasmClient
   // Signing client for interacting with Stargate chain APIs.
