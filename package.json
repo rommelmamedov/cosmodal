@@ -1,6 +1,6 @@
 {
   "name": "@noahsaso/cosmodal",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NoahSaso/cosmodal.git"
@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "0.28.10",
+    "@cosmjs/encoding": "0.28.10",
     "@cosmjs/stargate": "0.28.10",
     "@keplr-wallet/common": "^0.9.10",
     "@keplr-wallet/cosmos": "^0.9.16",

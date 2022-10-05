@@ -1,4 +1,5 @@
 import { SigningCosmWasmClientOptions } from "@cosmjs/cosmwasm-stargate"
+import { toHex } from "@cosmjs/encoding"
 import { SigningStargateClientOptions } from "@cosmjs/stargate"
 import { ChainInfo } from "@keplr-wallet/types"
 
@@ -60,7 +61,7 @@ export const getConnectedWalletInfo = async (
     address,
     publicKey: {
       data: pubKey,
-      hex: [...pubKey].map((i) => i.toString(16).padStart(2, "0")).join(""),
+      hex: toHex(pubKey),
     },
     signingCosmWasmClient,
     signingStargateClient,
