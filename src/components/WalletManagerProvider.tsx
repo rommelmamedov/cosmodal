@@ -69,6 +69,11 @@ export type WalletManagerProviderProps = PropsWithChildren<{
   getSigningCosmWasmClientOptions?: SigningClientGetter<SigningCosmWasmClientOptions>
   // Getter for options passed to SigningStargateClient on connection.
   getSigningStargateClientOptions?: SigningClientGetter<SigningStargateClientOptions>
+  // Shows the enabling modal on autoconnect. The default behavior
+  // is to hide it on autoconnect, since most times it will silently succeed
+  // from a previous connection, and the enabling modal is distracting during
+  // first page load.
+  showEnablingModalOnAutoconnect?: boolean
 }>
 
 export const WalletManagerProvider: FunctionComponent<
@@ -87,6 +92,7 @@ export const WalletManagerProvider: FunctionComponent<
   onKeplrKeystoreChangeEvent,
   getSigningCosmWasmClientOptions,
   getSigningStargateClientOptions,
+  showEnablingModalOnAutoconnect = false,
 }) => {
   //! STATE
 
@@ -116,6 +122,9 @@ export const WalletManagerProvider: FunctionComponent<
   const [status, setStatus] = useState<WalletConnectionStatus>(
     WalletConnectionStatus.Initializing
   )
+  // If is autoconnecting. This should be true when autoconnecting, to be used
+  // to hide the enabling modal on first connection.
+  const [isAutoconnecting, setIsAutoconnecting] = useState(false)
   // In case WalletConnect fails to load, we need to be able to retry.
   // This is done through clicking reset on the WalletConnectModal.
   const [connectingWallet, setConnectingWallet] = useState<Wallet>()
@@ -145,6 +154,8 @@ export const WalletManagerProvider: FunctionComponent<
     }
     // No longer connecting a wallet.
     setConnectingWallet(undefined)
+    // No longer autoconnecting.
+    setIsAutoconnecting(false)
   }, [])
 
   // Disconnect from connected wallet.
@@ -329,6 +340,9 @@ export const WalletManagerProvider: FunctionComponent<
       return
     }
 
+    // No longer autoconnecting if opening modal.
+    setIsAutoconnecting(false)
+
     // If no default wallet, open modal to choose one.
     setPickerModalOpen(true)
   }, [
@@ -397,6 +411,7 @@ export const WalletManagerProvider: FunctionComponent<
       // If localStorage value present, auto connect.
       (localStorageKey && !!localStorage.getItem(localStorageKey))
     ) {
+      setIsAutoconnecting(true)
       beginConnection()
     }
   }, [status, beginConnection, isEmbeddedKeplrMobileWeb, localStorageKey])
@@ -517,16 +532,20 @@ export const WalletManagerProvider: FunctionComponent<
           uri={walletConnectUri}
         />
       )}
-      {status !== WalletConnectionStatus.Resetting && walletEnableModalOpen && (
-        <EnablingWalletModal
-          classNames={classNames}
-          closeIcon={closeIcon}
-          isOpen
-          onClose={() => setWalletEnableModalOpen(false)}
-          renderLoader={renderLoader}
-          reset={_reset}
-        />
-      )}
+      {status !== WalletConnectionStatus.Resetting &&
+        // Don't show enabling modal on autoconnect attempt (first try when load
+        // page likely), unless overridden from prop.
+        (!isAutoconnecting || showEnablingModalOnAutoconnect) &&
+        walletEnableModalOpen && (
+          <EnablingWalletModal
+            classNames={classNames}
+            closeIcon={closeIcon}
+            isOpen
+            onClose={() => setWalletEnableModalOpen(false)}
+            renderLoader={renderLoader}
+            reset={_reset}
+          />
+        )}
       {status === WalletConnectionStatus.Resetting && (
         <BaseModal
           classNames={classNames}
