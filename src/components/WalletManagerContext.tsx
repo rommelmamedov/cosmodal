@@ -1,8 +1,15 @@
 import { ChainInfo } from "@keplr-wallet/types"
-import { createContext, useContext, useEffect, useState } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 
 import {
   ConnectedWallet,
+  ConnectWalletToChainFunction,
   IWalletManagerContext,
   UseWalletResponse,
   WalletConnectionStatus,
@@ -34,21 +41,27 @@ export const useWallet = (
     getSigningStargateClientOptions,
   } = useWalletManager()
 
+  // Connect to chain ID if provided when main wallet connection has been
+  // established.
+  const shouldConnectToChainId =
+    managerStatus === WalletConnectionStatus.Connected &&
+    !!managerConnectedWallet &&
+    !!chainId
   const [chainIdStatus, setChainIdStatus] = useState<WalletConnectionStatus>(
-    WalletConnectionStatus.Initializing
+    () =>
+      shouldConnectToChainId
+        ? // Initialize as connecting if we should immediately try to connect.
+          WalletConnectionStatus.Connecting
+        : WalletConnectionStatus.Initializing
   )
+
   const [chainIdError, setChainIdError] = useState<unknown>()
   const [chainIdConnectedWallet, setChainIdConnectedWallet] =
     useState<ConnectedWallet>()
   useEffect(() => {
-    if (
-      managerStatus !== WalletConnectionStatus.Connected ||
-      !managerConnectedWallet ||
-      !chainId
-    ) {
-      // If the initial wallet client is not yet connected, this chainId
-      // cannot be connected to yet and is thus still initializing.
-      setChainIdStatus(WalletConnectionStatus.Initializing)
+    if (!shouldConnectToChainId) {
+      // If manager not connected, pass through status updates.
+      setChainIdStatus(managerStatus)
       setChainIdConnectedWallet(undefined)
       setChainIdError(undefined)
       return
@@ -61,7 +74,6 @@ export const useWallet = (
       const chainInfo = await getChainInfo(chainId, chainInfoOverrides)
 
       setChainIdConnectedWallet(
-        // TODO: Cache
         await getConnectedWalletInfo(
           managerConnectedWallet.wallet,
           managerConnectedWallet.walletClient,
@@ -85,6 +97,7 @@ export const useWallet = (
     getSigningCosmWasmClientOptions,
     getSigningStargateClientOptions,
     chainInfoOverrides,
+    shouldConnectToChainId,
   ])
 
   const status = chainId ? chainIdStatus : managerStatus
@@ -95,4 +108,41 @@ export const useWallet = (
     : managerConnectedWallet
 
   return { status, connected, error, ...connectedWallet }
+}
+
+export const useConnectWalletToChain = () => {
+  const {
+    status,
+    connectedWallet,
+    chainInfoOverrides,
+    getSigningCosmWasmClientOptions,
+    getSigningStargateClientOptions,
+  } = useWalletManager()
+
+  const connectWalletToChain: ConnectWalletToChainFunction = useCallback(
+    async (chainId) => {
+      if (status !== WalletConnectionStatus.Connected || !connectedWallet) {
+        throw new Error("Wallet must first be connected to the default chain.")
+      }
+
+      const chainInfo = await getChainInfo(chainId, chainInfoOverrides)
+
+      return await getConnectedWalletInfo(
+        connectedWallet.wallet,
+        connectedWallet.walletClient,
+        chainInfo,
+        await getSigningCosmWasmClientOptions?.(chainInfo),
+        await getSigningStargateClientOptions?.(chainInfo)
+      )
+    },
+    [
+      chainInfoOverrides,
+      connectedWallet,
+      getSigningCosmWasmClientOptions,
+      getSigningStargateClientOptions,
+      status,
+    ]
+  )
+
+  return connectWalletToChain
 }

@@ -129,9 +129,23 @@ This hook returns all relevant fields, but you will likely only use this to `con
 
 This hook is a subset of `useWalletManager`, returning the fields inside the `connectedWallet` object, as well as `status` and `error`. It also takes an optional `chainId`, which will instantiate clients for the desired chain once the wallet is connected. This lets you seamlessly connect and use clients for many different chains. If no `chainId` is passed, it will return the connection info for the default chain (from the initial wallet connection via `useWalletManager`'s `connect` function).
 
+### useConnectWalletToChain
+
+```
+() => ConnectWalletToChainFunction
+```
+
+This hook provides a function that takes a `chainId` and tries to connect to it
+with the already connected wallet client. This function expects the wallet to
+already be connected to the default chain.
+
 ### Relevant types
 
 ```tsx
+type ConnectWalletToChainFunction = (
+  chainId: ChainInfo["chainId"]
+) => Promise<ConnectedWallet>
+
 type UseWalletResponse = Partial<ConnectedWallet> &
   Pick<IWalletManagerContext, "status" | "error">
 
