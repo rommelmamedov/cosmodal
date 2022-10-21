@@ -48,48 +48,51 @@ export const useWallet = (
     !!managerConnectedWallet &&
     !!chainId
   const [chainIdStatus, setChainIdStatus] = useState<WalletConnectionStatus>(
-    () =>
-      shouldConnectToChainId
-        ? // Initialize as connecting if we should immediately try to connect.
-          WalletConnectionStatus.Connecting
-        : WalletConnectionStatus.Initializing
+    WalletConnectionStatus.Initializing
   )
 
   const [chainIdError, setChainIdError] = useState<unknown>()
   const [chainIdConnectedWallet, setChainIdConnectedWallet] =
     useState<ConnectedWallet>()
   useEffect(() => {
-    if (!shouldConnectToChainId) {
-      // If manager not connected, pass through status updates.
-      setChainIdStatus(managerStatus)
-      setChainIdConnectedWallet(undefined)
-      setChainIdError(undefined)
+    // If should not connect, already connecting, or already connected, do
+    // nothing.
+    if (
+      !shouldConnectToChainId ||
+      chainIdStatus === WalletConnectionStatus.Connecting ||
+      chainIdStatus === WalletConnectionStatus.Connected ||
+      chainIdStatus === WalletConnectionStatus.Errored
+    ) {
       return
     }
 
+    // Try to connect.
     const connect = async () => {
       setChainIdStatus(WalletConnectionStatus.Connecting)
+      setChainIdConnectedWallet(undefined)
       setChainIdError(undefined)
 
-      const chainInfo = await getChainInfo(chainId, chainInfoOverrides)
+      try {
+        const chainInfo = await getChainInfo(chainId, chainInfoOverrides)
 
-      setChainIdConnectedWallet(
-        await getConnectedWalletInfo(
-          managerConnectedWallet.wallet,
-          managerConnectedWallet.walletClient,
-          chainInfo,
-          await getSigningCosmWasmClientOptions?.(chainInfo),
-          await getSigningStargateClientOptions?.(chainInfo)
+        setChainIdConnectedWallet(
+          await getConnectedWalletInfo(
+            managerConnectedWallet.wallet,
+            managerConnectedWallet.walletClient,
+            chainInfo,
+            await getSigningCosmWasmClientOptions?.(chainInfo),
+            await getSigningStargateClientOptions?.(chainInfo)
+          )
         )
-      )
-      setChainIdStatus(WalletConnectionStatus.Connected)
+        setChainIdStatus(WalletConnectionStatus.Connected)
+      } catch (error) {
+        console.error(error)
+        setChainIdError(error)
+        setChainIdStatus(WalletConnectionStatus.Errored)
+      }
     }
 
-    connect().catch((error) => {
-      console.error(error)
-      setChainIdError(error)
-      setChainIdStatus(WalletConnectionStatus.Errored)
-    })
+    connect()
   }, [
     managerStatus,
     managerConnectedWallet,
@@ -98,11 +101,12 @@ export const useWallet = (
     getSigningStargateClientOptions,
     chainInfoOverrides,
     shouldConnectToChainId,
+    chainIdStatus,
   ])
 
-  const status = chainId ? chainIdStatus : managerStatus
+  const status = shouldConnectToChainId ? chainIdStatus : managerStatus
   const connected = status === WalletConnectionStatus.Connected
-  const error = chainId ? chainIdError : managerError
+  const error = shouldConnectToChainId ? chainIdError : managerError
   const connectedWallet = chainId
     ? chainIdConnectedWallet
     : managerConnectedWallet
