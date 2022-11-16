@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cosmjs/amino": "0.29.3",
     "@cosmjs/cosmwasm-stargate": "0.29.3",
     "@cosmjs/stargate": "0.29.3",
     "@keplr-wallet/cosmos": "^0.10.5",
