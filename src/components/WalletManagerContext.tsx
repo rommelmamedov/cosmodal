@@ -104,6 +104,23 @@ export const useWallet = (
     chainIdStatus,
   ])
 
+  // If chainId wallet is connected and manager wallet changes status away from
+  // connected, reset so that we reconnect once manager reconnects. This ensures
+  // that we disconnect when the manager disconnects, and update accounts when
+  // the manager changes accounts.
+  useEffect(() => {
+    if (
+      !!chainId &&
+      !!chainIdConnectedWallet &&
+      chainIdStatus === WalletConnectionStatus.Connected &&
+      managerStatus !== WalletConnectionStatus.Connected
+    ) {
+      setChainIdStatus(WalletConnectionStatus.Initializing)
+      setChainIdError(undefined)
+      setChainIdConnectedWallet(undefined)
+    }
+  }, [managerStatus, chainId, chainIdStatus, chainIdConnectedWallet])
+
   const status = shouldConnectToChainId ? chainIdStatus : managerStatus
   const connected = status === WalletConnectionStatus.Connected
   const error = shouldConnectToChainId ? chainIdError : managerError
