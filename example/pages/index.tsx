@@ -2,7 +2,7 @@ import {
   WalletConnectionStatus,
   useWallet,
   useWalletManager,
-} from "@noahsaso/cosmodal"
+} from "@rommelmamedov/cosmodal"
 import type { NextPage } from "next"
 import { useCallback, useState } from "react"
 
@@ -58,10 +58,7 @@ const Home: NextPage = () => {
               Address: <b>{address}</b>
             </p>
             <p>
-              Public key:{" "}
-              <b>
-                {publicKey?.hex ?? '<empty>'}
-              </b>
+              Public key: <b>{publicKey?.hex ?? "<empty>"}</b>
             </p>
             <button
               onClick={disconnect}

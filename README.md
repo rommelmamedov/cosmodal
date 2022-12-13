@@ -1,16 +1,16 @@
-# @noahsaso/cosmodal
+# @rommelmamedov/cosmodal
 
 A wallet connector with mobile WalletConnect support for the Cosmos ecosystem.
 
 ## Example
 
-The example is deployed on Vercel at https://noahsaso-cosmodal.vercel.app.
+The example is deployed on Vercel at https://rommelmamedov-cosmodal.vercel.app.
 
 It can also be run locally using these commands:
 
 ```sh
 # Clone the repo.
-git clone https://github.com/NoahSaso/cosmodal
+git clone https://github.com/rommelmamedov/cosmodal
 # Enter the example folder.
 cd cosmodal/example
 
@@ -25,9 +25,9 @@ yarn && yarn dev
 1. Install the Cosmodal package in your React project
 
 ```sh
-npm install --save @noahsaso/cosmodal
+npm install --save @rommelmamedov/cosmodal
 # OR
-yarn add @noahsaso/cosmodal
+yarn add @rommelmamedov/cosmodal
 ```
 
 2. Import `WalletManagerProvider` and wrap it around your whole app. Only include it once as an ancestor of all components that need to access the wallet. Likely you'll want this in your root App component. Check out the example code to see how to define wallets.
@@ -37,7 +37,7 @@ import {
   WalletManagerProvider,
   ChainInfoID,
   WalletType,
-} from "@noahsaso/cosmodal"
+} from "@rommelmamedov/cosmodal"
 
 const MyApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
   <WalletManagerProvider
@@ -64,7 +64,7 @@ import {
   useWalletManager,
   useWallet,
   WalletConnectionStatus,
-} from "@noahsaso/cosmodal"
+} from "@rommelmamedov/cosmodal"
 
 const Home: NextPage = () => {
   const { connect, disconnect } = useWalletManager()
