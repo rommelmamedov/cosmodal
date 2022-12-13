@@ -1,6 +1,6 @@
 {
   "name": "@rommelmamedov/cosmodal",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rommelmamedov/cosmodal.git"
@@ -72,6 +72,7 @@
     "babel-loader": "^8.2.5",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
+    "css-loader": "^6.7.2",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -89,6 +90,7 @@
     "react-dom": "^18.2.0",
     "secretjs": "^0.17.5",
     "stream-browserify": "^3.0.0",
+    "style-loader": "^3.3.1",
     "ts-jest": "^28.0.5",
     "ts-loader": "^9.2.8",
     "typescript": "^4.4.2",

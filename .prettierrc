@@ -8,21 +8,6 @@
 	"trailingComma": "es5",
 	"arrowParens": "avoid",
 	"proseWrap": "preserve",
-	"importOrder": [
-		"pages/(.*)$",
-		"components/(.*)$",
-		"features/(.*)$",
-		"hooks/(.*)$",
-		"providers/(.*)$",
-		"assets/(.*)$",
-		"styles/(.*)$",
-		"^./*.*.css",
-		"^[./]"
-	],
-	"importOrderGroupNamespaceSpecifiers": true,
-	"importOrderCaseInsensitive": true,
-	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true,
 	"overrides": [
 		{
 			"files": "package.json",

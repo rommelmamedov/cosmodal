@@ -1,3 +1,4 @@
+import '../style.css';
 import { SigningCosmWasmClientOptions } from '@cosmjs/cosmwasm-stargate';
 import { SigningStargateClientOptions } from '@cosmjs/stargate';
 import { IClientMeta } from '@walletconnect/types';
