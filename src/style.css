@@ -38,3 +38,56 @@
 	margin-top: 0.25rem;
 	color: rgb(75 85 99);
 }
+
+.modal-content {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 1.25rem;
+	border-radius: 1rem;
+	display: flex;
+	flex-direction: column;
+	background: white;
+	width: 100%;
+	max-width: 36rem;
+	outline: none;
+	cursor: auto;
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 50;
+	background-color: rgba(0, 0, 0, 0.3);
+	display: flex;
+	align-items: center;
+	justify-content: cetner;
+	cursor: pointer;
+}
+
+.modal-header {
+	color: rgb(31, 41, 55);
+	font-size: 1.25rem;
+	font-weight: bold;
+	line-height: 1.75rem;
+	margin-bottom: 1rem;
+}
+
+.modal-close-button {
+	position: absolute;
+	top: 1.25rem;
+	right: 1.25rem;
+	cursor: pointer;
+}
+
+.modal-subheader {
+	color: rgb(31, 41, 55);
+	font-size: 1rem;
+	font-weight: bold;
+	line-height: 1.25rem;
+}

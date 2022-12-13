@@ -2,7 +2,7 @@ import { isAndroid as checkIsAndroid, isMobile as checkIsMobile } from '@walletc
 import QRCode from 'qrcode.react';
 import React, { FunctionComponent, useEffect, useMemo, useState } from 'react';
 
-import { BaseModal, BaseModalProps, ModalSubheader } from './BaseModal';
+import { BaseModal, BaseModalProps } from './BaseModal';
 
 const IOS_KEPLR_MOBILE_URL = 'itms-apps://itunes.apple.com/app/1567851089';
 
@@ -88,15 +88,15 @@ export const WalletConnectModal: FunctionComponent<WalletConnectModalProps> = ({
 					)}
 
 					<button onClick={() => setQrShowing(s => !s)} style={{ textAlign: 'left' }}>
-						<ModalSubheader
-							className={classNames?.modalSubheader}
+						<div
+							className="modal-subheader"
 							style={{
 								marginBottom: qrShowing ? '1rem' : 0,
 								textDecoration: 'underline',
 							}}
 						>
 							{qrShowing ? 'Hide' : 'Show'} QR Code
-						</ModalSubheader>
+						</div>
 					</button>
 				</>
 			)}

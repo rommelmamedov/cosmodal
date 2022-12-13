@@ -1,4 +1,4 @@
-import { FunctionComponent, PropsWithChildren, ReactElement, ReactNode } from 'react';
+import { PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { ModalClassNames } from '../../types';
 export declare type BaseModalProps = PropsWithChildren<{
     isOpen: boolean;
@@ -8,6 +8,5 @@ export declare type BaseModalProps = PropsWithChildren<{
     classNames?: ModalClassNames;
     closeIcon?: ReactNode;
 }>;
-export declare const BaseModal: FunctionComponent<BaseModalProps>;
-export declare const ModalSubheader: import("styled-components").StyledComponent<"div", any, {}, never>;
+export declare const BaseModal: ({ isOpen, onClose, title, classNames, closeIcon, children }: BaseModalProps) => JSX.Element;
 //# sourceMappingURL=BaseModal.d.ts.map
