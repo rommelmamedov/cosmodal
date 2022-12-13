@@ -4,7 +4,7 @@ A wallet connector with mobile WalletConnect support for the Cosmos ecosystem.
 
 ## Example
 
-The example is deployed on Vercel at https://rommelmamedov-cosmodal.vercel.app.
+The example is deployed on Vercel at https://cosmodal.vercel.app.
 
 It can also be run locally using these commands:
 

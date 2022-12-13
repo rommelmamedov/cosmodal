@@ -1,3 +1,35 @@
 {
-  "semi": false
+	"semi": true,
+	"tabWidth": 2,
+	"useTabs": true,
+	"printWidth": 140,
+	"singleQuote": true,
+	"preserve": "always",
+	"trailingComma": "es5",
+	"arrowParens": "avoid",
+	"proseWrap": "preserve",
+	"importOrder": [
+		"pages/(.*)$",
+		"components/(.*)$",
+		"features/(.*)$",
+		"hooks/(.*)$",
+		"providers/(.*)$",
+		"assets/(.*)$",
+		"styles/(.*)$",
+		"^./*.*.css",
+		"^[./]"
+	],
+	"importOrderGroupNamespaceSpecifiers": true,
+	"importOrderCaseInsensitive": true,
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true,
+	"overrides": [
+		{
+			"files": "package.json",
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false
+			}
+		}
+	]
 }
