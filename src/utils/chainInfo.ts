@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 /*
  * Data taken from @osmosis-labs/osmosis-frontend with minor alterations.
  * https://github.com/osmosis-labs/osmosis-frontend/blob/11bfa1f07f0dda8c8aab1048bd04270a23641783/packages/web/config/chain-infos.ts
@@ -85,6 +88,8 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 				coinDecimals: 6,
 				coinGeckoId: 'osmosis',
 				coinImageUrl: '/tokens/osmo.svg',
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				isStakeCurrency: true,
 				isFeeCurrency: true,
 			},
@@ -151,6 +156,8 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 				coinGeckoId: 'terrausd',
 				coinImageUrl: '/tokens/ustc.png',
 				isFeeCurrency: true,
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				pegMechanism: 'algorithmic',
 			},
 			{
@@ -159,6 +166,8 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 				coinDecimals: 6,
 				coinGeckoId: 'terra-krw',
 				coinImageUrl: '/tokens/krtc.png',
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				pegMechanism: 'algorithmic',
 			},
 		],
