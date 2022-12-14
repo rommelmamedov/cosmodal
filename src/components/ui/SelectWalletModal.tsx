@@ -12,19 +12,21 @@ export const SelectWalletModal = ({ wallets, selectWallet, classNames, ...props 
 	<BaseModal classNames={classNames} title="Connect wallet" {...props}>
 		<ul className="wallet-list">
 			{wallets.map(wallet => (
-				<li
-					key={wallet.type}
-					className="wallet-list-item"
-					onClick={e => {
-						e.preventDefault();
-						selectWallet(wallet);
-					}}
-				>
-					<img alt="keplr logo" src={wallet.imageUrl} />
-					<div className="wallet-list-item-info">
-						<div className="wallet-name">{wallet.name}</div>
-						<div className="wallet-description">{wallet.description}</div>
-					</div>
+				<li key={wallet.type}>
+					<button
+						className="wallet-list-item connectWalletModalBtn"
+						onClick={e => {
+							e.preventDefault();
+							selectWallet(wallet);
+						}}
+						title={wallet.name}
+					>
+						<img alt="keplr logo" src={wallet.imageUrl} />
+						<span className="text">
+							<span className="title">{wallet.name}</span>
+							<em className="subtitle">{wallet.description}</em>
+						</span>
+					</button>
 				</li>
 			))}
 		</ul>

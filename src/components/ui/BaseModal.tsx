@@ -21,7 +21,7 @@ export const BaseModal = ({ isOpen, onClose, title, classNames, children }: Base
 	return (
 		<ReactModal
 			ariaHideApp={false}
-			className={classNames?.modalContent ?? 'customModalContent'}
+			className={classNames?.modalContent ?? 'customModalContent md'}
 			closeTimeoutMS={200}
 			contentElement={(props, children) => (
 				<div className="modal-content" {...props}>
@@ -43,10 +43,10 @@ export const BaseModal = ({ isOpen, onClose, title, classNames, children }: Base
 			shouldCloseOnOverlayClick={true}
 		>
 			<div className="customModalInner">
-				<div className="customModalHeader">
+				<div className="customModalHeader noBorder">
 					{title && <h6>{title}</h6>}
 					{onClose && (
-						<button className="close" onClick={onClose} title="Close">
+						<button className="close" data-style="link" onClick={onClose} title="Close">
 							<svg fill="none" height="15" viewBox="0 0 15 15" width="15">
 								<path
 									d="M6.80149 7.5086L0.646484 13.6636L1.35359 14.3707L7.5086 8.2157L13.6636 14.3707L14.3707 13.6636L8.2157 7.5086L14.3707 1.35359L13.6636 0.646484L7.5086 6.80149L1.35359 0.646484L0.646484 1.35359L6.80149 7.5086Z"
