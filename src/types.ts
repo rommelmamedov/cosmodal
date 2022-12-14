@@ -13,6 +13,7 @@ export type WalletClient = Keplr | IKeplrWalletConnectV1;
 export enum WalletType {
 	Keplr = 'keplr',
 	WalletConnectKeplr = 'walletconnect_keplr',
+	Kryptic = 'kryptic',
 }
 
 export interface Wallet {

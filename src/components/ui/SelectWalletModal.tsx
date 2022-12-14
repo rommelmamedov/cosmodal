@@ -15,6 +15,7 @@ export const SelectWalletModal = ({ wallets, selectWallet, classNames, ...props 
 				<li key={wallet.type} className="connectWalletModalItem">
 					<button
 						className="connectWalletModalBtn"
+						disabled={wallet.name === 'Kryptic'}
 						onClick={e => {
 							e.preventDefault();
 							selectWallet(wallet);

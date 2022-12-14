@@ -1,4 +1,4 @@
-import { keplrLogo, walletConnectLogo } from '../constants';
+import { keplrLogo, krypticLogo, walletConnectLogo } from '../constants';
 import { Wallet, WalletType } from '../types';
 
 // TODO: Move imageUrl, and maybe name/description, to user configuration somehow, or incorporate in planned configurable UI overhaul.
@@ -31,4 +31,18 @@ export const WalletConnectKeplrWallet: Wallet = {
 		client.getOfflineSignerOnlyAmino.bind(client),
 };
 
-export const Wallets: Wallet[] = [KeplrWallet, WalletConnectKeplrWallet];
+export const KrypticWallet: Wallet = {
+	type: WalletType.Kryptic,
+	name: 'Kryptic',
+	description: 'Coming soon...',
+	// description: 'Kryptic Chrome Extension',
+	imageUrl: krypticLogo,
+	// TODO:
+	getClient: async () => undefined,
+	// WalletConnect only supports Amino signing.
+	getOfflineSignerFunction: client =>
+		// This function expects to be bound to the `client` instance.
+		client.getOfflineSignerOnlyAmino.bind(client),
+};
+
+export const Wallets: Wallet[] = [KeplrWallet, WalletConnectKeplrWallet, KrypticWallet];
