@@ -12,16 +12,16 @@ export const SelectWalletModal = ({ wallets, selectWallet, classNames, ...props 
 	<BaseModal classNames={classNames} title="Connect wallet" {...props}>
 		<ul className="wallet-list">
 			{wallets.map(wallet => (
-				<li key={wallet.type}>
+				<li key={wallet.type} className="connectWalletModalItem">
 					<button
-						className="wallet-list-item connectWalletModalBtn"
+						className="connectWalletModalBtn"
 						onClick={e => {
 							e.preventDefault();
 							selectWallet(wallet);
 						}}
 						title={wallet.name}
 					>
-						<img alt="keplr logo" src={wallet.imageUrl} />
+						<img alt={`${wallet.name} logo`} src={wallet.imageUrl} />
 						<span className="text">
 							<span className="title">{wallet.name}</span>
 							<em className="subtitle">{wallet.description}</em>
