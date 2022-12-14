@@ -2,7 +2,6 @@ import React, { PropsWithChildren, ReactElement, ReactNode, useEffect } from 're
 import ReactModal from 'react-modal';
 
 import { ModalClassNames } from '../../types';
-import { CloseIcon as DefaultCloseIcon } from './CloseIcon';
 
 export type BaseModalProps = PropsWithChildren<{
 	isOpen: boolean;
@@ -13,7 +12,7 @@ export type BaseModalProps = PropsWithChildren<{
 	closeIcon?: ReactNode;
 }>;
 
-export const BaseModal = ({ isOpen, onClose, title, classNames, closeIcon, children }: BaseModalProps) => {
+export const BaseModal = ({ isOpen, onClose, title, classNames, children }: BaseModalProps) => {
 	// ReactModal accessibility.
 	useEffect(() => {
 		ReactModal.setAppElement('body');
@@ -22,7 +21,8 @@ export const BaseModal = ({ isOpen, onClose, title, classNames, closeIcon, child
 	return (
 		<ReactModal
 			ariaHideApp={false}
-			className={classNames?.modalContent ?? '_'}
+			className={classNames?.modalContent ?? 'customModalContent'}
+			closeTimeoutMS={200}
 			contentElement={(props, children) => (
 				<div className="modal-content" {...props}>
 					{children}
@@ -33,22 +33,31 @@ export const BaseModal = ({ isOpen, onClose, title, classNames, closeIcon, child
 				e.preventDefault();
 				onClose?.();
 			}}
-			overlayClassName={classNames?.modalOverlay ?? '_'}
+			overlayClassName={classNames?.modalOverlay ?? 'customModalOverlay'}
 			overlayElement={(props, children) => (
 				<div className="modal-overlay" {...props}>
 					{children}
 				</div>
 			)}
+			portalClassName={classNames?.portalClassName ?? 'customModal'}
+			shouldCloseOnOverlayClick={true}
 		>
-			<>
-				{typeof title === 'string' ? <div className="modal-header">{title}</div> : title}
-				{onClose && (
-					<div className="modal-close-button" onClick={onClose}>
-						{closeIcon ?? <DefaultCloseIcon height={26} width={26} />}
-					</div>
-				)}
-				{children}
-			</>
+			<div className="customModalInner">
+				<div className="customModalHeader">
+					{title && <h6>{title}</h6>}
+					{onClose && (
+						<button className="close" onClick={onClose} title="Close">
+							<svg fill="none" height="15" viewBox="0 0 15 15" width="15">
+								<path
+									d="M6.80149 7.5086L0.646484 13.6636L1.35359 14.3707L7.5086 8.2157L13.6636 14.3707L14.3707 13.6636L8.2157 7.5086L14.3707 1.35359L13.6636 0.646484L7.5086 6.80149L1.35359 0.646484L0.646484 1.35359L6.80149 7.5086Z"
+									fill="currentColor"
+								/>
+							</svg>
+						</button>
+					)}
+				</div>
+				<div className="customModalBody">{children}</div>
+			</div>
 		</ReactModal>
 	);
 };

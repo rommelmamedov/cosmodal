@@ -91,3 +91,46 @@
 	font-weight: bold;
 	line-height: 1.25rem;
 }
+
+/*  */
+
+.customModalInner {
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	margin: auto;
+	background-color: #001f2c;
+	border: none;
+	border-radius: 0.8em;
+}
+
+.customModalHeader {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.333em;
+	border-bottom: 1px solid #1acfff;
+}
+
+.customModalHeader h6 {
+	margin-bottom: 0;
+	text-transform: uppercase;
+}
+
+.customModalHeader .close {
+	position: absolute;
+	top: 50%;
+	right: 1.333em;
+	opacity: 0.5;
+	transform: translateY(-50%);
+}
+
+.customModalHeader .close:hover,
+.customModalHeader .close:focus {
+	opacity: 1;
+}
+
+.customModalBody {
+	padding: 2.665em 1.333em;
+}

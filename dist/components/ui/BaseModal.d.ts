@@ -8,5 +8,5 @@ export declare type BaseModalProps = PropsWithChildren<{
     classNames?: ModalClassNames;
     closeIcon?: ReactNode;
 }>;
-export declare const BaseModal: ({ isOpen, onClose, title, classNames, closeIcon, children }: BaseModalProps) => JSX.Element;
+export declare const BaseModal: ({ isOpen, onClose, title, classNames, children }: BaseModalProps) => JSX.Element;
 //# sourceMappingURL=BaseModal.d.ts.map

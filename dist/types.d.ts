@@ -52,6 +52,7 @@ export interface ModalClassNames {
     modalOverlay?: string;
     modalHeader?: string;
     modalSubheader?: string;
+    portalClassName?: string;
     modalCloseButton?: string;
     walletList?: string;
     wallet?: string;

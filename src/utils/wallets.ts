@@ -1,3 +1,4 @@
+import { keplrLogo, walletConnectLogo } from '../constants';
 import { Wallet, WalletType } from '../types';
 
 // TODO: Move imageUrl, and maybe name/description, to user configuration somehow, or incorporate in planned configurable UI overhaul.
@@ -6,7 +7,7 @@ export const KeplrWallet: Wallet = {
 	type: WalletType.Keplr,
 	name: 'Keplr Wallet',
 	description: 'Keplr Chrome Extension',
-	imageUrl: '/keplr-logo.svg',
+	imageUrl: keplrLogo,
 	getClient: async () => (await import('@keplr-wallet/stores')).getKeplrFromWindow(),
 	getOfflineSignerFunction: client =>
 		// This function expects to be bound to the `client` instance.
@@ -17,7 +18,7 @@ export const WalletConnectKeplrWallet: Wallet = {
 	type: WalletType.WalletConnectKeplr,
 	name: 'WalletConnect',
 	description: 'Keplr Mobile',
-	imageUrl: '/walletconnect-logo.svg',
+	imageUrl: walletConnectLogo,
 	getClient: async (chainInfo, walletConnect) => {
 		if (walletConnect?.connected) {
 			return new (await import('../connectors')).KeplrWalletConnectV1(walletConnect, [chainInfo]);
