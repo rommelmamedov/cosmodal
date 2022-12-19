@@ -63,38 +63,22 @@ export const WalletConnectModal: FunctionComponent<WalletConnectModalProps> = ({
 			{!!navigateToAppURL && (
 				<>
 					<p className={classNames?.textContent} style={{ marginBottom: '1rem' }}>
-						<a href={navigateToAppURL} style={{ textDecoration: 'underline' }}>
-							Open your mobile wallet
-						</a>{' '}
-						and accept the connection request.
+						<a href={navigateToAppURL}>Open your mobile wallet</a> and accept the connection request.
 					</p>
-
 					<p className={classNames?.textContent} style={{ marginBottom: showMobileHelp ? '1rem' : '1.5rem' }}>
-						If you don&apos;t have Keplr Mobile installed,{' '}
-						<a href={isAndroid ? navigateToAppURL : IOS_KEPLR_MOBILE_URL} style={{ textDecoration: 'underline' }}>
-							click here to install it
-						</a>
-						. You can also scan the QR code at the bottom from another device with Keplr Mobile installed.
+						If you don&apos;t have Keplr Mobile installed, click here to{' '}
+						<a href={isAndroid ? navigateToAppURL : IOS_KEPLR_MOBILE_URL}>install</a> it.
+						<br />
+						You can also scan the QR code at the bottom from another device with Keplr Mobile installed.
 					</p>
-
 					{showMobileHelp && (
 						<p className={classNames?.textContent} style={{ marginBottom: '1.5rem' }}>
-							If nothing shows up in your mobile wallet, or nothing happened once you accepted,{' '}
-							<button onClick={reset} style={{ textDecoration: 'underline', display: 'inline' }}>
-								click here to reset
-							</button>{' '}
-							and try connecting again. Refresh the page if the problem persists.
+							If nothing shows up in your mobile wallet, or nothing happened once you accepted, click this button to{' '}
+							<button onClick={reset}>reset</button> and try connecting again. Refresh the page if the problem persists.
 						</p>
 					)}
-
 					<button onClick={() => setQrShowing(s => !s)} style={{ textAlign: 'left' }}>
-						<div
-							className="modal-subheader"
-							style={{
-								marginBottom: qrShowing ? '1rem' : 0,
-								textDecoration: 'underline',
-							}}
-						>
+						<div className="modal-subheader" style={{ marginBottom: qrShowing ? '1rem' : 0 }}>
 							{qrShowing ? 'Hide' : 'Show'} QR Code
 						</div>
 					</button>

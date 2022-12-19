@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 import { BaseModal, BaseModalProps } from './BaseModal';
 
@@ -7,7 +7,7 @@ export interface EnablingWalletModalProps extends BaseModalProps {
 	reset: () => void;
 }
 
-export const EnablingWalletModal: FunctionComponent<EnablingWalletModalProps> = ({ isOpen, classNames, renderLoader, reset, ...props }) => {
+export const EnablingWalletModal = ({ isOpen, classNames, renderLoader, reset, ...props }: EnablingWalletModalProps) => {
 	const [showHelp, setShowHelp] = useState(false);
 	// Show help if timeout is reached.
 	useEffect(() => {
@@ -24,14 +24,10 @@ export const EnablingWalletModal: FunctionComponent<EnablingWalletModalProps> = 
 		<BaseModal classNames={classNames} isOpen={isOpen} maxWidth="24rem" title="Enabling Wallet..." {...props}>
 			{showHelp && (
 				<p className={classNames?.textContent}>
-					If nothing shows up in your wallet,{' '}
-					<button onClick={reset} style={{ textDecoration: 'underline', display: 'inline' }}>
-						click here to reset
-					</button>{' '}
-					and try connecting again. Refresh the page if the problem persists.
+					If nothing shows up in your wallet, click this button to <button onClick={reset}>reset</button> and try connecting again. Refresh
+					the page if the problem persists.
 				</p>
 			)}
-
 			{renderLoader && <div className="mt-4">{renderLoader()}</div>}
 		</BaseModal>
 	);
