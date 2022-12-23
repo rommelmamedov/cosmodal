@@ -125,6 +125,7 @@ export type UseWalletResponse = Partial<ConnectedWallet> & Pick<IWalletManagerCo
 export type ConnectWalletToChainFunction = (chainId: ChainInfo['chainId']) => Promise<ConnectedWallet>;
 
 export enum ChainInfoID {
+	Dominion = 'dominion',
 	Osmosis1 = 'osmosis-1',
 	Cosmoshub4 = 'cosmoshub-4',
 	Columbus5 = 'columbus-5',
