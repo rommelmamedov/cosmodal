@@ -114,6 +114,8 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 			coinMinimalDenom: 'uminion',
 			coinDecimals: 6,
 			coinGeckoId: 'dom',
+			isStakeCurrency: true,
+			isFeeCurrency: true,
 		},
 	},
 	[ChainInfoID.Osmosis1]: {
