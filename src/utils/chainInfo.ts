@@ -72,6 +72,50 @@ export function createKeplrChainInfo({ currencies: _currencies, ...chainInfo }: 
 }
 
 const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
+	[ChainInfoID.Dominion]: {
+		chainId: 'dominion',
+		chainName: 'Dominion',
+		rpc: 'http://167.71.227.235:26657',
+		rest: 'http://167.71.227.235:1317',
+		bip44: {
+			coinType: 118,
+		},
+		bech32Config: {
+			bech32PrefixAccAddr: 'dom',
+			bech32PrefixAccPub: 'dom' + 'pub',
+			bech32PrefixValAddr: 'dom' + 'valoper',
+			bech32PrefixValPub: 'dom' + 'valoperpub',
+			bech32PrefixConsAddr: 'dom' + 'valcons',
+			bech32PrefixConsPub: 'dom' + 'valconspub',
+		},
+		currencies: [
+			{
+				coinDenom: 'MINION',
+				coinMinimalDenom: 'uminion',
+				coinDecimals: 6,
+				coinGeckoId: 'dom',
+			},
+		],
+		feeCurrencies: [
+			{
+				coinDenom: 'MINION',
+				coinMinimalDenom: 'uminion',
+				coinDecimals: 6,
+				coinGeckoId: 'dom',
+				gasPriceStep: {
+					low: 0.01,
+					average: 0.025,
+					high: 0.04,
+				},
+			},
+		],
+		stakeCurrency: {
+			coinDenom: 'MINION',
+			coinMinimalDenom: 'uminion',
+			coinDecimals: 6,
+			coinGeckoId: 'dom',
+		},
+	},
 	[ChainInfoID.Osmosis1]: {
 		rpc: 'https://rpc-osmosis.keplr.app/', // test: "http://rpc-test.osmosis.zone/"
 		rest: 'https://lcd-osmosis.keplr.app/', // test: "http://lcd-test.osmosis.zone/"
