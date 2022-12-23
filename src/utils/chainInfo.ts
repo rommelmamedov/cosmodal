@@ -94,28 +94,20 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 				coinMinimalDenom: 'uminion',
 				coinDecimals: 6,
 				coinGeckoId: 'dom',
+				isStakeCurrency: true,
+				isFeeCurrency: true,
 			},
-		],
-		feeCurrencies: [
 			{
 				coinDenom: 'MINION',
 				coinMinimalDenom: 'uminion',
 				coinDecimals: 6,
 				coinGeckoId: 'dom',
-				gasPriceStep: {
-					low: 0.01,
-					average: 0.025,
-					high: 0.04,
-				},
 			},
 		],
-		stakeCurrency: {
-			coinDenom: 'MINION',
-			coinMinimalDenom: 'uminion',
-			coinDecimals: 6,
-			coinGeckoId: 'dom',
-			isStakeCurrency: true,
-			isFeeCurrency: true,
+		gasPriceStep: {
+			low: 0.01,
+			average: 0.025,
+			high: 0.04,
 		},
 	},
 	[ChainInfoID.Osmosis1]: {
