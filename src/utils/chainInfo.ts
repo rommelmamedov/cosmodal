@@ -75,8 +75,8 @@ const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 	[ChainInfoID.Dominion]: {
 		chainId: 'dominion',
 		chainName: 'Dominion',
-		rpc: 'http://167.71.227.235:26657',
-		rest: 'http://167.71.227.235:1317',
+		rpc: 'http://dominion-testnet-rpc.webisoft.org:26657',
+		rest: 'http://dominion-testnet-rpc.webisoft.org:1317',
 		bip44: {
 			coinType: 118,
 		},

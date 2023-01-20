@@ -470,7 +470,14 @@ export const WalletManagerProvider: FunctionComponent<WalletManagerProviderProps
 					classNames={classNames}
 					closeIcon={closeIcon}
 					isOpen
-					onClose={() => setPickerModalOpen(false)}
+					onClose={() => {
+						setPickerModalOpen(false);
+						// If closed out of picker modal without selecting a wallet to
+						// connect to, reset status back to ReadyForConnection.
+						if (!connectingWallet) {
+							setStatus(WalletConnectionStatus.ReadyForConnection);
+						}
+					}}
 					selectWallet={_connectToWallet}
 					wallets={enabledWallets}
 				/>
