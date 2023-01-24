@@ -73,42 +73,35 @@ export function createKeplrChainInfo({ currencies: _currencies, ...chainInfo }: 
 
 const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 	[ChainInfoID.Dominion]: {
-		chainId: 'dominion',
-		chainName: 'Dominion',
-		rpc: 'http://dominion-testnet-rpc.webisoft.org:26657',
-		rest: 'http://dominion-testnet-rpc.webisoft.org:1317',
+		rpc: 'http://dominion-testnet-rest.webisoft.org:26657',
+		rest: 'http://dominion-testnet-rest.webisoft.org:1317',
+		chainId: ChainInfoID.Dominion,
+		chainName: 'DOMINION Network',
 		bip44: {
 			coinType: 118,
 		},
-		bech32Config: {
-			bech32PrefixAccAddr: 'dom',
-			bech32PrefixAccPub: 'dom' + 'pub',
-			bech32PrefixValAddr: 'dom' + 'valoper',
-			bech32PrefixValPub: 'dom' + 'valoperpub',
-			bech32PrefixConsAddr: 'dom' + 'valcons',
-			bech32PrefixConsPub: 'dom' + 'valconspub',
-		},
+		bech32Config: Bech32Address.defaultBech32Config('dom'),
 		currencies: [
 			{
 				coinDenom: 'MINION',
 				coinMinimalDenom: 'uminion',
 				coinDecimals: 6,
-				coinGeckoId: 'dom',
+			},
+			{
+				coinDenom: 'MINION',
+				coinMinimalDenom: 'uminion',
+				coinDecimals: 0,
 				isStakeCurrency: true,
-				isFeeCurrency: true,
 			},
 			{
 				coinDenom: 'MINION',
 				coinMinimalDenom: 'uminion',
 				coinDecimals: 6,
-				coinGeckoId: 'dom',
+				isFeeCurrency: true,
 			},
 		],
-		gasPriceStep: {
-			low: 0.01,
-			average: 0.025,
-			high: 0.04,
-		},
+		beta: true,
+		features: ['cosmwasm'],
 	},
 	[ChainInfoID.Osmosis1]: {
 		rpc: 'https://rpc-osmosis.keplr.app/', // test: "http://rpc-test.osmosis.zone/"
