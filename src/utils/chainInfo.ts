@@ -73,8 +73,8 @@ export function createKeplrChainInfo({ currencies: _currencies, ...chainInfo }: 
 
 const SimpleChainInfoList: Record<ChainInfoID, SimplifiedChainInfo> = {
 	[ChainInfoID.Dominion]: {
-		rpc: 'http://dominion-testnet-rest.webisoft.org:26657',
-		rest: 'http://dominion-testnet-rest.webisoft.org:1317',
+		rpc: 'https://dominion-testnet-rpc.webisoft.org',
+		rest: 'https://dominion-testnet-rest.webisoft.org',
 		chainId: ChainInfoID.Dominion,
 		chainName: 'DOMINION Network',
 		bip44: {
